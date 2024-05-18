@@ -1,5 +1,6 @@
 package org.demolishers.buddybank.model;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,19 +12,17 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "accounts")
-public class Account {
+public class LoanRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String accountNumber;
-    private BigDecimal balance;
-    private BigDecimal creditLimit;
+    private BigDecimal amount;
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    private LoanStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 }
-
-
