@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Accounts</h1>
+    <!-- Check if accounts is empty -->
+    <th:block th:if="${accounts.empty}">
+        <p class="text-muted">No accounts available.</p>
+        <!-- You can add an icon here if you want -->
+    </th:block>
+    <table class="table" th:if="${not accounts.empty}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Balance</th>
+            <th>Credit Limit</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="account : ${accounts}">
+            <td th:text="${account.id}"></td>
+            <td th:text="${account.balance}"></td>
+            <td th:text="${account.creditLimit}"></td>
+
+            <td>
+                <form onsubmit="return validateCreditLimit(this);" method="post" th:action="@{/admin/accounts/{id}/credit-limit(id=${account.id})}">
+                    <div class="input-group">
+                        <input type="number" name="creditLimit" class="form-control" step="0.01" placeholder="Credit Limit" min="0">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Button to redirect to login page -->
+    <a href="../login" class="btn btn-danger me-2">Logout</a>
+    <a href="loan-requests" class="btn btn-danger me-2">Loan Requests</a>
+
+</div>
+<!-- Bootstrap JS (optional, for some features) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function validateCreditLimit(form) {
+        var creditLimit = form.creditLimit.value;
+        if (creditLimit < 0) {
+            alert("Credit limit cannot be less than 0.");
+            return false;
+        }
+        return true;
+    }
+</script>
+</body>
+</html>

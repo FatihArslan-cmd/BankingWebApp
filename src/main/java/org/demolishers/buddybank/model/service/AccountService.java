@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AccountService {
@@ -30,7 +31,11 @@ public class AccountService {
     public void deleteAccount(Long accountId) {
         accountRepository.deleteById(accountId);
     }
-
+    // Method to find an account by its ID
+    public Account findById(Long id) {
+        Optional<Account> accountOptional = accountRepository.findById(id);
+        return accountOptional.orElse(null); // Return the account if found, otherwise return null
+    }
     public Account save(Account account) {
         return accountRepository.save(account);
     }

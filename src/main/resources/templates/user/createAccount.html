@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<header class="container mt-5">
+    <h1>Create New Account</h1>
+</header>
+
+<div class="container mt-3">
+    <form class="row g-3" action="#" th:action="@{/user/accounts}" th:object="${account}" method="post">
+
+        <div class="col-md-6">
+            <label for="balance" class="form-label">Balance:</label>
+            <input type="number" id="balance" class="form-control" th:field="*{balance}" min="0" onchange="validateBalance()" />
+            <div id="balanceError" class="text-danger"></div>
+        </div>
+        <div class="col-md-6">
+            <label for="creditLimit" class="form-label">Credit Limit (5 times balance):</label>
+            <input type="text" id="creditLimit" class="form-control" th:field="*{creditLimit}" readonly />
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </div>
+    </form>
+</div>
+
+<div class="container mt-3">
+    <a href="#" th:href="@{/user/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+<!-- Bootstrap JS (optional, for some features) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function validateBalance() {
+        var balanceInput = document.getElementById("balance");
+        var creditLimitInput = document.getElementById("creditLimit");
+        var balanceError = document.getElementById("balanceError");
+
+        if (balanceInput.value < 0) {
+            balanceError.innerText = "Balance cannot be less than 0.";
+            balanceInput.setCustomValidity("Balance cannot be less than 0.");
+        } else {
+            balanceError.innerText = "";
+            balanceInput.setCustomValidity("");
+
+            // Set credit limit as 5 times balance
+            creditLimitInput.value = balanceInput.value * 5;
+        }
+    }
+</script>
+</body>
+</html>

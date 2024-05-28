@@ -8,6 +8,7 @@ import org.demolishers.buddybank.repository.LoanRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -21,7 +22,29 @@ public class LoanRequestService {
         this.accountService = accountService;
     }
 
+    public List<LoanRequest> findByUser(User user) {
+        return loanRequestRepository.findByUser(user);
+    }
+
     public LoanRequest createLoanRequest(User user, LoanRequest loanRequest) {
+        // Loan request amount
+        BigDecimal loanAmount = loanRequest.getAmount();
+
+        // User's first account
+        Account account = user.getAccounts().get(0);
+
+        // Account's credit limit
+        BigDecimal accountCreditLimit = account.getCreditLimit();
+
+        // Account's current balance
+        BigDecimal accountBalance = account.getBalance();
+
+        // Ensure the loan amount does not exceed the credit limit minus the balance
+        if (loanAmount.compareTo(accountCreditLimit.subtract(accountBalance)) > 0) {
+            throw new RuntimeException("Loan amount exceeds credit limit");
+        }
+
+        // Assign the loan request to the user and save
         loanRequest.setUser(user);
         loanRequest.setStatus(LoanStatus.PENDING);
         return loanRequestRepository.save(loanRequest);
@@ -39,7 +62,8 @@ public class LoanRequestService {
         loanRequest.setDescription(description);
         loanRequestRepository.save(loanRequest);
 
-        Account account = loanRequest.getUser().getAccounts().get(0);
+        User user = loanRequest.getUser();
+        Account account = user.getAccounts().get(0);
         account.setBalance(account.getBalance().add(loanRequest.getAmount()));
         accountService.save(account);
     }
